@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 // State - two type
 // Local, Shared/Application
@@ -12,8 +13,11 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CounterControllerInheritedWidget(
-      counterController: CounterController(),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => CounterController()),
+        ChangeNotifierProvider(create: (_) => ABCController()),
+      ],
       child: MaterialApp(
         title: 'Flutter Demo',
         theme: ThemeData(colorScheme: .fromSeed(seedColor: Colors.deepPurple)),
@@ -30,9 +34,7 @@ class MyHomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final counterController = CounterControllerInheritedWidget.of(
-      context,
-    ).counterController;
+    final counterController = context.read<CounterController>();
 
     return Scaffold(
       appBar: AppBar(
@@ -44,15 +46,24 @@ class MyHomePage extends StatelessWidget {
           mainAxisAlignment: .center,
           children: [
             const Text('You have pushed the button this many times:'),
-            ListenableBuilder(
-              listenable: counterController,
-              builder: (context, child) {
+            // ListenableBuilder(
+            //   listenable: counterController,
+            //   builder: (context, child) {
+            //     return Text(
+            //       '${counterController.counter}',
+            //       style: Theme.of(context).textTheme.headlineMedium,
+            //     );
+            //   },
+            // ),
+            Consumer<CounterController>(
+              builder: (context, controller, child) {
                 return Text(
-                  '${counterController.counter}',
+                  '${controller.counter}',
                   style: Theme.of(context).textTheme.headlineMedium,
                 );
               },
             ),
+
             TextButton(
               onPressed: () {
                 Navigator.push(
@@ -79,9 +90,7 @@ class SettingsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final counterController = CounterControllerInheritedWidget.of(
-      context,
-    ).counterController;
+    final counterController = context.read<CounterController>();
 
     return Scaffold(
       appBar: AppBar(title: Text('Settings')),
@@ -92,6 +101,11 @@ class SettingsScreen extends StatelessWidget {
             ListenableBuilder(
               listenable: counterController,
               builder: (context, child) {
+                return Text('Counter ${counterController.counter}');
+              },
+            ),
+            Consumer<CounterController>(
+              builder: (context, _, child) {
                 return Text('Counter ${counterController.counter}');
               },
             ),
@@ -118,22 +132,31 @@ class CounterController extends ChangeNotifier {
   }
 }
 
-class CounterControllerInheritedWidget extends InheritedWidget {
-  final CounterController counterController;
+class ABCController extends ChangeNotifier {
+  int counter = 0;
 
-  const CounterControllerInheritedWidget({
-    super.key,
-    required super.child,
-    required this.counterController,
-  });
-
-  @override
-  bool updateShouldNotify(covariant InheritedWidget oldWidget) {
-    return true;
-  }
-
-  static CounterControllerInheritedWidget of(BuildContext context) {
-    return context
-        .dependOnInheritedWidgetOfExactType<CounterControllerInheritedWidget>()!;
+  void increment() {
+    counter++;
+    notifyListeners();
   }
 }
+
+// class CounterControllerInheritedWidget extends InheritedWidget {
+//   final CounterController counterController;
+//
+//   const CounterControllerInheritedWidget({
+//     super.key,
+//     required super.child,
+//     required this.counterController,
+//   });
+//
+//   @override
+//   bool updateShouldNotify(covariant InheritedWidget oldWidget) {
+//     return true;
+//   }
+//
+//   static CounterControllerInheritedWidget of(BuildContext context) {
+//     return context
+//         .dependOnInheritedWidgetOfExactType<CounterControllerInheritedWidget>()!;
+//   }
+// }
