@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:live_class_app/todo_list_controller.dart';
+import 'package:live_class_app/todo_list_screen.dart';
 import 'package:provider/provider.dart';
 
 // State - two type
@@ -17,11 +19,12 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (_) => CounterController()),
         ChangeNotifierProvider(create: (_) => ABCController()),
+        ChangeNotifierProvider(create: (_) => TodoListController()),
       ],
       child: MaterialApp(
         title: 'Flutter Demo',
         theme: ThemeData(colorScheme: .fromSeed(seedColor: Colors.deepPurple)),
-        home: const MyHomePage(title: 'Flutter Demo Home Page'),
+        home: TodoListScreen(),
       ),
     );
   }
