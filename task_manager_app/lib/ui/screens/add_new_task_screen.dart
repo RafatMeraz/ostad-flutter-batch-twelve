@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:task_manager_app/data/service/network_caller.dart';
 import 'package:task_manager_app/data/utils/urls.dart';
+import 'package:task_manager_app/ui/providers/new_task_list_provider.dart';
 import 'package:task_manager_app/ui/widgets/screen_background.dart';
 import 'package:task_manager_app/ui/widgets/snack_bar_message.dart';
 import 'package:task_manager_app/ui/widgets/tm_app_bar.dart';
@@ -107,6 +109,7 @@ class _AddNewTaskScreenState extends State<AddNewTaskScreen> {
 
     if (response.isSuccess) {
       _clearTextFields();
+      context.read<NewTaskListProvider>().getNewTaskList();
       showSnackBarMessage(context, 'New task added!');
     } else {
       showSnackBarMessage(context, response.errorMessage);
