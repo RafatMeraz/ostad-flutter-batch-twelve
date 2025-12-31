@@ -57,11 +57,43 @@ class _HomeScreenState extends State<HomeScreen> {
           return SizedBox();
         },
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // Add new match
-        },
-        child: Icon(Icons.add),
+      floatingActionButton: Row(
+        mainAxisAlignment: .spaceAround,
+        children: [
+          FloatingActionButton(
+            onPressed: () {
+              // Add new match
+              FootballMatch match = FootballMatch(
+                  team1Name: 'Uruguay',
+                  team2Name: 'Brazil',
+                  team1Score: 1,
+                  team2Score: 2,
+                  isRunning: true,
+                  winnerTeam: '');
+              _firestore.collection('football').doc('uruvsbra').set(match.toJson());
+            },
+            child: Icon(Icons.add),
+          ),
+          FloatingActionButton(
+            onPressed: () {
+              // Add new match
+              // FootballMatch match = FootballMatch(
+              //     team1Name: 'Uruguay',
+              //     team2Name: 'Brazil',
+              //     team1Score: 1,
+              //     team2Score: 2,
+              //     isRunning: false,
+              //     winnerTeam: 'Brazil');
+              // _firestore.collection('football').doc('uruvsbra').update(match.toJson());
+              _firestore.collection('football').doc('uruvsbra').update({
+                'is_running': true,
+                'winner_team': ''
+              });
+              // _firestore.collection('football').doc('uruvsbra').delete();
+            },
+            child: Icon(Icons.update),
+          ),
+        ],
       ),
     );
   }
@@ -121,5 +153,16 @@ class FootballMatch {
       isRunning: jsonData['is_running'],
       winnerTeam: jsonData['winner_team'],
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'team1_name': team1Name,
+      'team2_name': team2Name,
+      'team1_score': team1Score,
+      'team2_score': team2Score,
+      'is_running': isRunning,
+      'winner_team': winnerTeam,
+    };
   }
 }
