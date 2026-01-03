@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -32,7 +33,19 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Football Live Score')),
+      appBar: AppBar(
+        title: Text(
+          'Football Live Score ${FirebaseAuth.instance.currentUser?.email}',
+        ),
+        actions: [
+          IconButton(
+            onPressed: () {
+              FirebaseAuth.instance.signOut();
+            },
+            icon: Icon(Icons.logout),
+          ),
+        ],
+      ),
       body: StreamBuilder(
         stream: _firestore.collection('football').snapshots(),
         builder: (context, asyncSnapshot) {
@@ -64,13 +77,17 @@ class _HomeScreenState extends State<HomeScreen> {
             onPressed: () {
               // Add new match
               FootballMatch match = FootballMatch(
-                  team1Name: 'Uruguay',
-                  team2Name: 'Brazil',
-                  team1Score: 1,
-                  team2Score: 2,
-                  isRunning: true,
-                  winnerTeam: '');
-              _firestore.collection('football').doc('uruvsbra').set(match.toJson());
+                team1Name: 'Uruguay',
+                team2Name: 'Brazil',
+                team1Score: 1,
+                team2Score: 2,
+                isRunning: true,
+                winnerTeam: '',
+              );
+              _firestore
+                  .collection('football')
+                  .doc('uruvsbra')
+                  .set(match.toJson());
             },
             child: Icon(Icons.add),
           ),
@@ -87,7 +104,7 @@ class _HomeScreenState extends State<HomeScreen> {
               // _firestore.collection('football').doc('uruvsbra').update(match.toJson());
               _firestore.collection('football').doc('uruvsbra').update({
                 'is_running': true,
-                'winner_team': ''
+                'winner_team': '',
               });
               // _firestore.collection('football').doc('uruvsbra').delete();
             },
