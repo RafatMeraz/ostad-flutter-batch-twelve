@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -31,6 +33,12 @@ class _HomeScreenState extends State<HomeScreen> {
   // }
 
   @override
+  void initState() {
+    super.initState();
+    FirebaseCrashlytics.instance.log('Entering into home screen');
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -40,6 +48,11 @@ class _HomeScreenState extends State<HomeScreen> {
         actions: [
           IconButton(
             onPressed: () {
+              FirebaseAnalytics.instance.logEvent(name: 'Tired Logout', parameters: {
+                'userId': FirebaseAuth.instance.currentUser!.uid,
+                'email': FirebaseAuth.instance.currentUser!.email!,
+              });
+              throw Exception('My exception');
               FirebaseAuth.instance.signOut();
             },
             icon: Icon(Icons.logout),
