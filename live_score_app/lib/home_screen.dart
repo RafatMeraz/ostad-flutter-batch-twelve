@@ -3,6 +3,7 @@ import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -14,6 +15,39 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   final List<FootballMatch> _footballMatches = [];
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  BannerAd? _bannerAd;
+
+  void _loadAd() async {
+    // Get an AnchoredAdaptiveBannerAdSize before loading the ad.
+    final size = await AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(
+      MediaQuery.sizeOf(context).width.truncate(),
+    );
+
+    if (size == null) {
+      // Unable to get width of anchored banner.
+      return;
+    }
+
+    BannerAd(
+      adUnitId: 'ca-app-pub-3940256099942544/9214589741',
+      request: const AdRequest(),
+      size: size,
+      listener: BannerAdListener(
+        onAdLoaded: (ad) {
+          // Called when an ad is successfully received.
+          debugPrint("Ad was loaded.");
+          setState(() {
+            _bannerAd = ad as BannerAd;
+          });
+        },
+        onAdFailedToLoad: (ad, err) {
+          // Called when an ad request failed.
+          debugPrint("Ad failed to load with error: $err");
+          ad.dispose();
+        },
+      ),
+    ).load();
+  }
 
   // @override
   // void initState() {
@@ -40,6 +74,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    if (_bannerAd == null) {
+      _loadAd();
+    }
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -48,10 +85,13 @@ class _HomeScreenState extends State<HomeScreen> {
         actions: [
           IconButton(
             onPressed: () {
-              FirebaseAnalytics.instance.logEvent(name: 'Tired Logout', parameters: {
-                'userId': FirebaseAuth.instance.currentUser!.uid,
-                'email': FirebaseAuth.instance.currentUser!.email!,
-              });
+              FirebaseAnalytics.instance.logEvent(
+                name: 'Tired Logout',
+                parameters: {
+                  'userId': FirebaseAuth.instance.currentUser!.uid,
+                  'email': FirebaseAuth.instance.currentUser!.email!,
+                },
+              );
               throw Exception('My exception');
               FirebaseAuth.instance.signOut();
             },
@@ -59,29 +99,43 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
-      body: StreamBuilder(
-        stream: _firestore.collection('football').snapshots(),
-        builder: (context, asyncSnapshot) {
-          if (asyncSnapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
-          }
+      body: Column(
+        children: [
+          if (_bannerAd != null)
+            SafeArea(
+              child: SizedBox(
+                width: _bannerAd!.size.width.toDouble(),
+                height: _bannerAd!.size.height.toDouble(),
+                child: AdWidget(ad: _bannerAd!),
+              ),
+            ),
+          Expanded(
+            child: StreamBuilder(
+              stream: _firestore.collection('football').snapshots(),
+              builder: (context, asyncSnapshot) {
+                if (asyncSnapshot.connectionState == ConnectionState.waiting) {
+                  return Center(child: CircularProgressIndicator());
+                }
 
-          if (asyncSnapshot.hasError) {
-            return Center(child: Text('Error: ${asyncSnapshot.error}'));
-          }
+                if (asyncSnapshot.hasError) {
+                  return Center(child: Text('Error: ${asyncSnapshot.error}'));
+                }
 
-          if (asyncSnapshot.hasData) {
-            _footballMatches.clear();
-            for (QueryDocumentSnapshot<Map<String, dynamic>> doc
-                in asyncSnapshot.data!.docs) {
-              _footballMatches.add(FootballMatch.fromJson(doc.data()));
-            }
+                if (asyncSnapshot.hasData) {
+                  _footballMatches.clear();
+                  for (QueryDocumentSnapshot<Map<String, dynamic>> doc
+                      in asyncSnapshot.data!.docs) {
+                    _footballMatches.add(FootballMatch.fromJson(doc.data()));
+                  }
 
-            return _buildListView();
-          }
+                  return _buildListView();
+                }
 
-          return SizedBox();
-        },
+                return SizedBox();
+              },
+            ),
+          ),
+        ],
       ),
       floatingActionButton: Row(
         mainAxisAlignment: .spaceAround,

@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:live_score_app/fcm_service.dart';
 import 'package:live_score_app/home_screen.dart';
 import 'package:live_score_app/sign_in_screen.dart';
@@ -27,6 +28,9 @@ Future<void> main() async {
   FirebaseCrashlytics.instance.setCustomKey('userRole', 'guest');
 
   await FcmService.initialize();
+
+  // Initialize the Mobile Ads SDK.
+  MobileAds.instance.initialize();
 
   print(await FcmService.getToken());
 
