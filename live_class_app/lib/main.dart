@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:live_class_app/home_screen.dart';
+import 'package:live_class_app/my_location_screen.dart';
 
 // State - two type
 // Local, Shared/Application
@@ -13,6 +13,6 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(home: HomeScreen());
+    return const MaterialApp(home: MyLocationScreen());
   }
 }
