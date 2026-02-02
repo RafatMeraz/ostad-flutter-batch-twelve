@@ -7,6 +7,8 @@ import 'package:provider/provider.dart';
 import '../l10n/app_localizations.dart';
 import 'app_routes.dart';
 
+// TODO: Add Theme Mode Change Provider
+
 class CraftyBayApp extends StatelessWidget {
   const CraftyBayApp({super.key});
 
