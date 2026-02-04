@@ -33,13 +33,10 @@ class CraftyBayApp extends StatelessWidget {
             darkTheme: AppTheme.darkTheme,
             locale: languageProvider.currentLocale,
             supportedLocales: languageProvider.supportedLocales,
+            themeMode: .light,
           );
         }
       ),
     );
   }
 }
-
-
-// Model, Screen/Widget, Controllers -> Layer First
-// Feature First -> features - auth - model/presentation/controller
