@@ -1,3 +1,5 @@
+import 'package:crafty_bay/features/auth/presentation/screens/sign_in_screen.dart';
+import 'package:crafty_bay/features/auth/presentation/screens/verify_otp_screen.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../app/extensions/utils_extension.dart';
@@ -37,7 +39,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 children: [
                   AppLogo(),
                   const SizedBox(height: 24),
-                  Text('Sign Up With Email', style: context.textTheme.titleLarge),
+                  Text(
+                    'Sign Up With Email',
+                    style: context.textTheme.titleLarge,
+                  ),
                   Text(
                     'Get started with your details',
                     style: context.textTheme.bodyLarge?.copyWith(
@@ -53,8 +58,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   const SizedBox(height: 8),
                   TextFormField(
                     decoration: InputDecoration(hintText: 'First name'),
-                    validator: (String? value) =>
-                        Validators.validateText(value, 'First name is required'),
+                    validator: (String? value) => Validators.validateText(
+                      value,
+                      'First name is required',
+                    ),
                   ),
                   const SizedBox(height: 8),
                   TextFormField(
@@ -85,6 +92,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     onPressed: _onTapSignUpButton,
                     child: Text('Sign Up'),
                   ),
+                  const SizedBox(height: 16),
+                  TextButton(
+                    onPressed: _onTapSignInButton,
+                    child: Text('Already have an account? Sign in'),
+                  ),
                 ],
               ),
             ),
@@ -94,7 +106,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
     );
   }
 
-  void _onTapSignUpButton() {}
+  void _onTapSignUpButton() {
+    Navigator.pushNamed(context, VerifyOtpScreen.name);
+  }
+
+  void _onTapSignInButton() {
+    Navigator.pushNamed(context, SignInScreen.name);
+  }
 
   @override
   void dispose() {

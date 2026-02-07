@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
+import '../features/auth/presentation/screens/sign_in_screen.dart';
 import '../features/auth/presentation/screens/sign_up_screen.dart';
 import '../features/auth/presentation/screens/splash_screen.dart';
+import '../features/auth/presentation/screens/verify_otp_screen.dart';
 
 class AppRoutes {
   static Route<dynamic>? onGenerateRoute(RouteSettings settings) {
@@ -12,6 +14,12 @@ class AppRoutes {
         break;
       case SignUpScreen.name:
         widget = const SignUpScreen();
+        break;
+      case SignInScreen.name:
+        widget = const SignInScreen();
+        break;
+      case VerifyOtpScreen.name:
+        widget = const VerifyOtpScreen();
         break;
     }
     return MaterialPageRoute(builder: (context) => widget);
