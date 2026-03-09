@@ -22,7 +22,8 @@ class AppRoutes {
         widget = const SignInScreen();
         break;
       case VerifyOtpScreen.name:
-        widget = const VerifyOtpScreen();
+        final email = settings.arguments as String;
+        widget = VerifyOtpScreen(email: email);
         break;
       case MainNavHolderScreen.name:
         widget = const MainNavHolderScreen();

@@ -42,7 +42,7 @@ class NetworkCaller {
           isSuccess: false,
           responseCode: response.statusCode,
           errorMessage:
-              decodedData['data'], // TODO: Decouple this data variable
+              decodedData['msg'], // TODO: Decouple this data variable
         );
       }
     } catch (e) {
@@ -88,7 +88,7 @@ class NetworkCaller {
         return NetworkResponse(
           isSuccess: false,
           responseCode: response.statusCode,
-          errorMessage: decodedData['data'],
+          errorMessage: decodedData['msg'],
         );
       }
     } catch (e) {
