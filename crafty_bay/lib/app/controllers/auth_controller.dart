@@ -29,7 +29,7 @@ class AuthController {
     token = prefs.getString(_tokenKey);
   }
 
-  static Future<bool> isIfUserLoggedIn() async {
+  static Future<bool> isUserAlreadyLoggedIn() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.containsKey(_tokenKey);
   }
