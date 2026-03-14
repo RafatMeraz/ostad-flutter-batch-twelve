@@ -6,4 +6,7 @@ class Urls {
   static const String loginUrl = '$_baseUrl/auth/login';
 
   static const String homeSlidersUrl = '$_baseUrl/slides';
+
+  static String categoryListUrl(int pageNo, int pageSize) =>
+      '$_baseUrl/categories?count=$pageSize&page=$pageNo';
 }

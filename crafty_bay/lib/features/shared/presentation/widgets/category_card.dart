@@ -1,10 +1,13 @@
+import 'package:crafty_bay/features/category/data/models/category_model.dart';
 import 'package:crafty_bay/features/products/presentation/screens/product_list_screen.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../app/app_colors.dart';
 
 class CategoryCard extends StatelessWidget {
-  const CategoryCard({super.key});
+  const CategoryCard({super.key, required this.categoryModel});
+
+  final CategoryModel categoryModel;
 
   @override
   Widget build(BuildContext context) {
@@ -13,7 +16,7 @@ class CategoryCard extends StatelessWidget {
         Navigator.pushNamed(
           context,
           ProductListScreen.name,
-          arguments: 'Electronics',
+          arguments: categoryModel.title,
         );
       },
       child: Column(
@@ -26,10 +29,15 @@ class CategoryCard extends StatelessWidget {
               color: AppColors.themeColor.withAlpha(30),
               borderRadius: BorderRadius.circular(8),
             ),
-            child: Icon(Icons.computer, size: 36, color: AppColors.themeColor),
+            child: Image.network(
+              categoryModel.icon,
+              height: 48,
+              width: 48,
+              errorBuilder: (context, error, stackTrace) => Icon(Icons.error),
+            ),
           ),
           Text(
-            'Electronics',
+            categoryModel.title,
             style: TextStyle(
               fontSize: 16,
               fontWeight: .w600,
