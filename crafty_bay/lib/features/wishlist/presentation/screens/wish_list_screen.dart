@@ -23,7 +23,7 @@ class _WishListScreenState extends State<WishListScreen> {
           mainAxisSpacing: 4,
         ),
         itemBuilder: (context, index) {
-          return FittedBox(child: ProductCard());
+          // return FittedBox(child: ProductCard());
         },
       ),
     );

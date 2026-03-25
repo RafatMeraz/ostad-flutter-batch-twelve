@@ -3,33 +3,32 @@ import 'package:crafty_bay/app/urls.dart';
 import 'package:crafty_bay/core/services/network_caller.dart';
 import 'package:flutter/foundation.dart';
 
-import '../../data/models/category_model.dart';
+import '../../data/models/product_model.dart';
 
-class CategoryListProvider extends ChangeNotifier {
+class ProductListProvider extends ChangeNotifier {
   final int _pageSize = 30;
 
   int _currentPageNo = 0;
 
   int? _lastPage;
 
-  final List<CategoryModel> _categories = [];
+  final List<ProductModel> _products = [];
 
-  bool _getInitialCategoryListInProgress = true;
+  bool _getInitialProductListInProgress = true;
 
-  bool _loadMoreCategoryListInProgress = false;
+  bool _loadMoreProductListInProgress = false;
 
-  bool get getInitialCategoryListInProgress =>
-      _getInitialCategoryListInProgress;
+  bool get getInitialProductListInProgress => _getInitialProductListInProgress;
 
-  bool get loadMoreCategoryListInProgress => _loadMoreCategoryListInProgress;
+  bool get loadMoreProductListInProgress => _loadMoreProductListInProgress;
 
-  List<CategoryModel> get categories => _categories;
+  List<ProductModel> get products => _products;
 
   String? _errorMessage;
 
   String? get errorMessage => _errorMessage;
 
-  Future<bool> getCategories() async {
+  Future<bool> getProducts(String categoryId) async {
     bool isSuccess = false;
 
     if (_lastPage != null && _currentPageNo >= _lastPage!) {
@@ -38,22 +37,22 @@ class CategoryListProvider extends ChangeNotifier {
 
     _currentPageNo++;
     if (_isInitialLoading) {
-      _getInitialCategoryListInProgress = true;
+      _getInitialProductListInProgress = true;
     } else {
-      _loadMoreCategoryListInProgress = true;
+      _loadMoreProductListInProgress = true;
     }
     notifyListeners();
 
     final NetworkResponse response = await getNetworkCaller().getRequest(
-      Urls.categoryListUrl(_currentPageNo, _pageSize),
+      Urls.productListUrl(_currentPageNo, _pageSize, categoryId),
     );
     if (response.isSuccess) {
       _lastPage = response.body['data']['last_page'] ?? _lastPage;
-      List<CategoryModel> categoryList = [];
-      for (Map<String, dynamic> category in response.body['data']['results']) {
-        categoryList.add(CategoryModel.fromJson(category));
+      List<ProductModel> productList = [];
+      for (Map<String, dynamic> product in response.body['data']['results']) {
+        productList.add(ProductModel.fromJson(product));
       }
-      _categories.addAll(categoryList);
+      _products.addAll(productList);
       isSuccess = true;
       _errorMessage = null;
     } else {
@@ -61,9 +60,9 @@ class CategoryListProvider extends ChangeNotifier {
     }
 
     if (_isInitialLoading) {
-      _getInitialCategoryListInProgress = false;
+      _getInitialProductListInProgress = false;
     } else {
-      _loadMoreCategoryListInProgress = false;
+      _loadMoreProductListInProgress = false;
     }
     notifyListeners();
 
@@ -75,5 +74,5 @@ class CategoryListProvider extends ChangeNotifier {
   }
 
   bool get isLoading =>
-      _getInitialCategoryListInProgress || _loadMoreCategoryListInProgress;
+      _getInitialProductListInProgress || _loadMoreProductListInProgress;
 }

@@ -1,4 +1,7 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:crafty_bay/features/products/data/models/product_model.dart';
 import 'package:crafty_bay/features/products/presentation/screens/product_details_screen.dart';
+import 'package:crafty_bay/features/shared/presentation/widgets/no_image.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../app/app_colors.dart';
@@ -7,7 +10,9 @@ import '../../../../app/constants.dart';
 import '../../../../app/extensions/utils_extension.dart';
 
 class ProductCard extends StatelessWidget {
-  const ProductCard({super.key});
+  const ProductCard({super.key, required this.productModel});
+
+  final ProductModel productModel;
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +40,7 @@ class ProductCard extends StatelessWidget {
                     topRight: .circular(8),
                   ),
                 ),
-                child: Image.asset(AssetPaths.dummyImagePng, fit: .scaleDown),
+                child: getImage(productModel.photos),
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -43,7 +48,8 @@ class ProductCard extends StatelessWidget {
                   spacing: 2,
                   children: [
                     Text(
-                      'Nike Shoe - New Edition 2025',
+                      productModel.title,
+                      overflow: TextOverflow.ellipsis,
                       maxLines: 1,
                       style: TextStyle(overflow: .ellipsis),
                     ),
@@ -51,7 +57,7 @@ class ProductCard extends StatelessWidget {
                       mainAxisAlignment: .spaceBetween,
                       children: [
                         Text(
-                          '${Constants.takaSign}120',
+                          '${Constants.takaSign}${productModel.currentPrice}',
                           style: context.textTheme.titleSmall?.copyWith(
                             color: AppColors.themeColor,
                           ),
@@ -91,5 +97,18 @@ class ProductCard extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Widget getImage(List<String> urls) {
+    if (urls.isNotEmpty) {
+      return CachedNetworkImage(
+        imageUrl: urls.first,
+        fit: .scaleDown,
+        progressIndicatorBuilder: (context, url, downloadProgress) => NoImage(),
+        errorWidget: (context, url, error) => NoImage(),
+      );
+    } else {
+      return NoImage();
+    }
   }
 }

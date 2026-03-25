@@ -13,7 +13,7 @@ class HorizontalProductListView extends StatelessWidget {
         scrollDirection: .horizontal,
         itemCount: 5,
         itemBuilder: (context, index) {
-          return ProductCard();
+          // return ProductCard();
         },
       ),
     );

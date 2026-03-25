@@ -23,7 +23,7 @@ class _CategoryListScreenState extends State<CategoryListScreen> {
   }
 
   void _loadCategories() {
-    if (context.read<CategoryListProvider>().loadMoreCategoryListInProgress) {
+    if (context.read<CategoryListProvider>().isLoading) {
       return;
     }
 
