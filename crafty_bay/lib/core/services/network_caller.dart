@@ -9,7 +9,7 @@ part '../models/network_response.dart';
 class NetworkCaller {
   final Logger _logger = Logger();
 
-  final Map<String, String> headers;
+  final Map<String, String> Function() headers;
   final VoidCallback onUnauthorize;
 
   NetworkCaller({required this.headers, required this.onUnauthorize});
@@ -19,7 +19,7 @@ class NetworkCaller {
       Uri uri = Uri.parse(url);
 
       _logRequest(url);
-      Response response = await get(uri, headers: headers);
+      Response response = await get(uri, headers: headers());
       _logResponse(url, response);
 
       final decodedData = jsonDecode(response.body);
@@ -57,6 +57,7 @@ class NetworkCaller {
   Future<NetworkResponse> postRequest(
     String url, {
     Map<String, dynamic>? body,
+    bool isFromLogin = false,
   }) async {
     try {
       Uri uri = Uri.parse(url);
@@ -64,7 +65,7 @@ class NetworkCaller {
       _logRequest(url, body: body);
       Response response = await post(
         uri,
-        headers: headers,
+        headers: headers(),
         body: jsonEncode(body),
       );
       _logResponse(url, response);
@@ -78,7 +79,9 @@ class NetworkCaller {
           body: decodedData,
         );
       } else if (response.statusCode == 401) {
-        onUnauthorize();
+        if (!isFromLogin) {
+          onUnauthorize();
+        }
         return NetworkResponse(
           isSuccess: false,
           responseCode: response.statusCode,

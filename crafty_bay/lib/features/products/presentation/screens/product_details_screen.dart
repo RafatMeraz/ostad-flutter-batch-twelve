@@ -1,4 +1,7 @@
+import 'package:crafty_bay/features/products/data/models/add_to_cart_model.dart';
+import 'package:crafty_bay/features/products/presentation/providers/add_to_cart_provider.dart';
 import 'package:crafty_bay/features/shared/presentation/widgets/center_circular_progress.dart';
+import 'package:crafty_bay/features/shared/presentation/widgets/snack_bar_message.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -25,7 +28,13 @@ class ProductDetailsScreen extends StatefulWidget {
 }
 
 class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
-  final ProductDetailsProvider _productDetailsProvider = ProductDetailsProvider();
+  final ProductDetailsProvider _productDetailsProvider =
+      ProductDetailsProvider();
+  final AddToCartProvider _addToCartProvider = AddToCartProvider();
+
+  int _quantity = 1;
+  String? _selectedColor;
+  String? _selectedSize;
 
   @override
   void initState() {
@@ -37,8 +46,11 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider.value(
-      value: _productDetailsProvider,
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider.value(value: _productDetailsProvider),
+        ChangeNotifierProvider.value(value: _addToCartProvider),
+      ],
       child: Scaffold(
         appBar: AppBar(title: Text('Product details')),
         body: Consumer<ProductDetailsProvider>(
@@ -57,7 +69,8 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                       children: [
                         ProductImageCarousel(
                           imageUrls: _productDetailsProvider
-                              .productDetailsModel!.photos,
+                              .productDetailsModel!
+                              .photos,
                         ),
                         Padding(
                           padding: const EdgeInsets.all(16),
@@ -66,19 +79,29 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                             children: [
                               _buildTitleSection(),
                               if (_productDetailsProvider
-                                  .productDetailsModel!.colors.isNotEmpty)
+                                  .productDetailsModel!
+                                  .colors
+                                  .isNotEmpty)
                                 ColorPicker(
                                   colors: _productDetailsProvider
-                                      .productDetailsModel!.colors,
-                                  onChange: (String color) {},
+                                      .productDetailsModel!
+                                      .colors,
+                                  onChange: (String color) {
+                                    _selectedColor = color;
+                                  },
                                 ),
                               const SizedBox(height: 16),
                               if (_productDetailsProvider
-                                  .productDetailsModel!.sizes.isNotEmpty)
+                                  .productDetailsModel!
+                                  .sizes
+                                  .isNotEmpty)
                                 SizePicker(
                                   sizes: _productDetailsProvider
-                                      .productDetailsModel!.sizes,
-                                  onChange: (String size) {},
+                                      .productDetailsModel!
+                                      .sizes,
+                                  onChange: (String size) {
+                                    _selectedSize = size;
+                                  },
                                 ),
                               const SizedBox(height: 16),
                               Text(
@@ -87,7 +110,8 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                               ),
                               const SizedBox(height: 8),
                               Text(
-                                _productDetailsProvider.productDetailsModel!
+                                _productDetailsProvider
+                                    .productDetailsModel!
                                     .description,
                                 style: TextStyle(color: Colors.grey),
                               ),
@@ -98,10 +122,29 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                     ),
                   ),
                 ),
-                PriceAndAddToCartSection(price: 120, onTapAddToCart: () {}),
+                PriceAndAddToCartSection(
+                  price: _productDetailsProvider
+                      .productDetailsModel!
+                      .currentPrice
+                      .toDouble(),
+                  onTapAddToCart: () async {
+                    AddToCartModel params = AddToCartModel(
+                      id: _productDetailsProvider.productDetailsModel!.id,
+                      quantity: _quantity,
+                      color: _selectedColor,
+                      size: _selectedSize,
+                    );
+                    final isSuccess = await _addToCartProvider.addToCart(params);
+                    if (isSuccess) {
+                      showSnackBarMessage(context, 'Added to cart');
+                    } else {
+                      showSnackBarMessage(context, _addToCartProvider.errorMessage!);
+                    }
+                  },
+                ),
               ],
             );
-          }
+          },
         ),
       ),
     );
@@ -139,9 +182,11 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
           ),
         ),
         IncDecButton(
-          maxCount: _productDetailsProvider.productDetailsModel!
-              .availableQuantity,
-          onChange: (int count) {},
+          maxCount:
+              _productDetailsProvider.productDetailsModel!.availableQuantity,
+          onChange: (int count) {
+            _quantity = count;
+          },
         ),
       ],
     );
