@@ -34,7 +34,8 @@ class AppRoutes {
         widget = ProductListScreen(category: category);
         break;
       case ProductDetailsScreen.name:
-        widget = ProductDetailsScreen();
+        final productId = settings.arguments as String;
+        widget = ProductDetailsScreen(productId: productId);
         break;
     }
     return MaterialPageRoute(builder: (context) => widget);

@@ -12,4 +12,7 @@ class Urls {
 
   static String productListUrl(int pageNo, int pageSize, String categoryId) =>
       '$_baseUrl/products?count=$pageSize&page=$pageNo&category=$categoryId';
+
+  static String productDetailsUrl(String productId) =>
+      '$_baseUrl/products/id/$productId';
 }

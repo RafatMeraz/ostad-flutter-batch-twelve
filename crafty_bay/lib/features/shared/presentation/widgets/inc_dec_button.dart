@@ -4,10 +4,16 @@ import 'package:flutter/material.dart';
 import '../../../../app/app_colors.dart';
 
 class IncDecButton extends StatefulWidget {
-  const IncDecButton({super.key, this.width = 100, required this.onChange});
+  const IncDecButton({
+    super.key,
+    required this.onChange,
+    this.width = 100,
+    this.maxCount = 20,
+  });
 
   final double width;
   final Function(int) onChange;
+  final int maxCount;
 
   @override
   State<IncDecButton> createState() => _IncDecButtonState();
@@ -32,9 +38,11 @@ class _IncDecButtonState extends State<IncDecButton> {
           }),
           Text('$_count', style: context.textTheme.titleLarge),
           _buildButton(Icons.add, () {
-            _count++;
-            widget.onChange(_count);
-            setState(() {});
+            if (_count < widget.maxCount) {
+              _count++;
+              widget.onChange(_count);
+              setState(() {});
+            }
           }),
         ],
       ),
