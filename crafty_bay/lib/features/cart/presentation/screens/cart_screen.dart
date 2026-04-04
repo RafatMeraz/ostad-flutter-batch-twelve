@@ -1,3 +1,5 @@
+import 'package:crafty_bay/features/cart/presentation/providers/cart_list_provider.dart';
+import 'package:crafty_bay/features/shared/presentation/widgets/center_circular_progress.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -13,6 +15,16 @@ class CartScreen extends StatefulWidget {
 }
 
 class _CartScreenState extends State<CartScreen> {
+  final CartListProvider _cartListProvider = CartListProvider();
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _cartListProvider.getCartList();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return PopScope(
@@ -28,18 +40,34 @@ class _CartScreenState extends State<CartScreen> {
           ),
           title: Text('Carts'),
         ),
-        body: Column(
-          children: [
-            Expanded(
-              child: ListView.builder(
-                itemCount: 4,
-                itemBuilder: (context, index) {
-                  return CartItem();
-                },
-              ),
-            ),
-            TotalPriceAndCheckoutSection(totalPrice: 120, onTapCheckout: () {}),
-          ],
+        body: ChangeNotifierProvider.value(
+          value: _cartListProvider,
+          child: Consumer<CartListProvider>(
+            builder: (context, _, _) {
+              if (_cartListProvider.getCartListInProgress) {
+                return CenterCircularProgress();
+              }
+
+              return Column(
+                children: [
+                  Expanded(
+                    child: ListView.builder(
+                      itemCount: _cartListProvider.cartItems.length,
+                      itemBuilder: (context, index) {
+                        return CartItem(
+                          cartItemModel: _cartListProvider.cartItems[index],
+                        );
+                      },
+                    ),
+                  ),
+                  TotalPriceAndCheckoutSection(
+                    totalPrice: _cartListProvider.totalPrice,
+                    onTapCheckout: () {},
+                  ),
+                ],
+              );
+            },
+          ),
         ),
       ),
     );
@@ -49,4 +77,3 @@ class _CartScreenState extends State<CartScreen> {
     context.read<MainNavProvider>().backToHome();
   }
 }
-

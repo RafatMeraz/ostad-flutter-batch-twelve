@@ -1,3 +1,4 @@
+import 'package:crafty_bay/app/controllers/auth_controller.dart';
 import 'package:flutter/foundation.dart';
 
 class MainNavProvider extends ChangeNotifier {
@@ -16,5 +17,13 @@ class MainNavProvider extends ChangeNotifier {
 
   void backToHome() {
     changeIndex(0);
+  }
+
+  Future<bool> isAlreadyLoggedIn() async {
+    return await AuthController.isUserAlreadyLoggedIn();
+  }
+
+  bool shouldVerifyLoginState(int index) {
+    return index == 2 || index == 3;
   }
 }

@@ -9,8 +9,10 @@ class IncDecButton extends StatefulWidget {
     required this.onChange,
     this.width = 100,
     this.maxCount = 20,
+    this.initialValue = 1,
   });
 
+  final int initialValue;
   final double width;
   final Function(int) onChange;
   final int maxCount;
@@ -21,6 +23,12 @@ class IncDecButton extends StatefulWidget {
 
 class _IncDecButtonState extends State<IncDecButton> {
   int _count = 1;
+
+  @override
+  void initState() {
+    super.initState();
+    _count = widget.initialValue;
+  }
 
   @override
   Widget build(BuildContext context) {

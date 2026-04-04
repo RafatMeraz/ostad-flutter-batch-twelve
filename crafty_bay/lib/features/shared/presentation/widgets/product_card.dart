@@ -1,13 +1,11 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:crafty_bay/features/products/data/models/product_model.dart';
 import 'package:crafty_bay/features/products/presentation/screens/product_details_screen.dart';
-import 'package:crafty_bay/features/shared/presentation/widgets/no_image.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../app/app_colors.dart';
-import '../../../../app/asset_paths.dart';
 import '../../../../app/constants.dart';
 import '../../../../app/extensions/utils_extension.dart';
+import 'network_image_widget.dart';
 
 class ProductCard extends StatelessWidget {
   const ProductCard({super.key, required this.productModel});
@@ -19,7 +17,10 @@ class ProductCard extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         Navigator.pushNamed(
-            context, ProductDetailsScreen.name, arguments: productModel.id);
+          context,
+          ProductDetailsScreen.name,
+          arguments: productModel.id,
+        );
       },
       child: Card(
         color: Colors.white,
@@ -41,7 +42,7 @@ class ProductCard extends StatelessWidget {
                     topRight: .circular(8),
                   ),
                 ),
-                child: getImage(productModel.photos),
+                child: AppNetworkImage(urls: productModel.photos),
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -98,18 +99,5 @@ class ProductCard extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  Widget getImage(List<String> urls) {
-    if (urls.isNotEmpty) {
-      return CachedNetworkImage(
-        imageUrl: urls.first,
-        fit: .scaleDown,
-        progressIndicatorBuilder: (context, url, downloadProgress) => NoImage(),
-        errorWidget: (context, url, error) => NoImage(),
-      );
-    } else {
-      return NoImage();
-    }
   }
 }
